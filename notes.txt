@@ -1,0 +1,257 @@
+----- RUBY -----
+
+Variable types in Ruby:
+    CONSTANT_VARIABLE - Constant variable;
+        Can but should not be changed
+
+    $global_variable - Global variable;
+        Available througout the app (overrides scope boundries)
+
+    @@class_varaible - Class variable;
+        Only accessible by instances of the class and the class itself.
+        Initialized at class level
+
+    @instance_variable - Instance variable;
+        Only accessible by the specific instance (can cross some scope boundries)
+
+    local_variable - Local variable;
+
+Nested arrrays in Ruby:
+
+    Array.new(num_elements) - creates an array of size num_elements
+
+    Array.new(num_rows, default_value) - creates an array filled with default_value
+        However this should only be used for immutable values (number, bool, symbol)
+        Passing a mutable value the default_value will be pointing to the same obj
+        and change to one will change them all (since they are all the same object!)
+
+    Array.new(num_rows, Array.new(num_collumns)) - SHOULD NOT BE USED
+        Because it will put  the same array in all the elements.
+
+    Instead pass the new array (or hash) as a &block:
+
+    Array.new(num_rows) { Array.new(num_collumns) }
+
+    Iterating over nested arrays:
+        teacher_mailboxes.each_with_index do |row, row_index|
+            row.each_with_index do |teacher, column_index|
+              puts "Row:#{row_index} Column:#{column_index} = #{teacher}"
+            end
+        end
+
+
+Objects in Ruby
+
+    Classes created as follows:
+    class NewClass
+        attr_accessor :name, :game #THIS creates setter and getter methods for all the specified attributes
+        attr_reader   :fame        #THIS creates getter methods
+        attr_writer   :shame       #This creates setter methods
+    end
+
+        def initialize(name, game, fame, shame)
+            @name = name
+            @game = game
+            @fame = fame
+            @shame = shame
+        end
+
+        def classify #creates a method for the class
+            "I am #{@name}" #THIS accesses the instance attribute directly --NOT SO GOOD--
+
+            "I am #{name}" #This uses the getter method of the instance --MUCH BETTER--
+
+            "I am #{self.name}" #THIS also uses the getter method but fall out of Ruby style guide --WORSE--
+        end
+
+    def set_namegame (n,g)
+        @name = n
+        @game = g #THIS changes the instance attributes directly --NOT SO GOOD--
+
+        self.name = n
+        self.game = g #THIS calls upon the setter method to set the new attributes --MUCH BETTER--
+                      #NOTE: 'name = n' cannot be used since it would treat name as a new variabele being Initialized
+    end
+
+    Class methods
+        Class methods are used for functionalities that DO NOT pertain to individual objects. (Doesn't deal with states):
+        def self.new_class_method #Class methods are premended with self.
+            "Test test"
+        end
+
+    Class Variables
+        Class variables capture values related to the entire class (and can change):
+        class NewClass
+            @@new_classes = 0 #Declared using @@
+
+            def initialize
+                @@new_classes += 1
+            end
+
+        def self.number_of_classes
+            @@new_classes
+        end
+    end
+
+    Class constants
+    Constants are used for values that DO NOT change:
+        class NewClass
+            IS_NEW_CLASS = true
+        end
+
+    to_s method
+        Default method in all objects that tells them what to do if they have to be returned as a string.
+        Can be modified by including it in your class methods.
+
+    Inheritance
+        You know what it is:
+        def MyCar < Transport #now MyCar inherits methods from Transport
+        end
+
+        The 'super' keyword
+            When included in a a method the 'super' keyword looks for a method wtih the same name in the superclass
+            and invokes it:
+            def add_fuel
+                super + fuel_pistol
+            end
+
+            'super'' can also be used in the initialize method:
+            def Transport
+                def initialize(class)
+                    @class = class
+                end
+            end
+
+            def MyCar
+                 def initialize(name)
+                    @name = name
+                    super               #When called without argument it passes the arguments of the MyCar initialize
+                                         method to the Transport initialize method - Transport.new(name) and returns
+                                         the results.
+                end
+            end
+
+            using it with arguments is quite self explanatory:
+            def initialize(name, class)
+                @name = name
+                super(class)
+            end
+
+            if it's empty - it's empty:
+            def initialize(name)
+                @name  = name
+                super()
+            end
+
+        Modules
+            These are method lists that can me MIXed into other classes to give them access to the methods specific to each
+            The lookup  path depends on when the module was mixedin, Ruby looks at the LAST mixin module FIRST:
+            module Wheelable        #it's common Ruby naming convention to add -able to the end of Modules
+                def increase_RPM
+                "Wroom"
+                end
+
+                def change_tires
+                    "Crrek-pok"
+                end
+            end
+
+            class Transport;  end
+
+            class MyCar < Transport
+                include Wheelalbe    #now MyCar can use Wheels methods
+            end
+
+        Namespacing
+            Modules can also be used to namespace (categorize) classes:
+            module RoadTransports
+                class MyCar; end
+                class MyTruck; end
+                class MyBike; end
+            end
+
+        To create and instance :: is used:
+            mr_squeeky_chain = RoadTransports::MyBike.new()
+
+        Containing methods
+            Modules can also be used to contain out of place methods:
+            module ABunchOfWeirdoes
+                ...
+                def just_another_weird_method(runes)
+                    runes
+                end
+            end
+
+            To call a method from a module:
+            value = ABunchOfWeirdoes.just_another_weird_method(4)
+
+        Private, Protected, Public OR METHOD ACCESS CONTROL
+
+            Access modifiers:
+            Public
+                All methods that dot have a specific access modifier are Public.
+                Available to all who knows the calss of object name.
+
+            Private
+                For methods that are doing work within the class and don't need to be accessible by the rest of the
+                program.
+                Initialized by the 'private' method call in the class (everything below it is private):
+
+                class SecretMan
+                    ...
+                    def present_id
+                        self.ID = create_id
+                    end
+
+                    private
+
+                    def create_id
+                        ...
+                    end
+
+                    def secret_action_1
+                        ...
+                    end
+                end
+
+                Protected
+                    Protected methods are in between Private and Public ones.
+                    Protected methods ALLOW FOR ACCESS BETWEEN INSTANCES!
+                    Initialized by the 'protected' method call:
+
+                    class SecretMan
+                    ...
+                    def same_department(other_man)
+                        department == other_man.department
+                    end
+                    ...
+
+                    protected
+
+                    def department
+                        department
+                    end
+
+Exception handling
+
+    The Begin...Rescue block
+    Follows the following structure:
+    begin
+        ... #Code to be tested goes here
+    rescue StandardError => e #In this case it only excutes when the error type is in 'StandardError'
+           Exception => e     #We can specify to catch ALL types of Exceptions
+                              #Leave empty to execute on all error types
+        ... #Code to execute if an error is caught goes here
+    else
+        ... #Code ot execute if no error is caught
+    ensure  #Optional: executes code no matter the outcome of the begin statement
+        ...
+        retry #Send the flow back to the begin statement
+    end
+
+
+
+
+
+
+
