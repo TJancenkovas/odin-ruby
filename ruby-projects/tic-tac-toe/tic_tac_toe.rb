@@ -1,5 +1,4 @@
-#Classes
-  #Player
+require 'pry'
 require 'matrix'
 
 class Board
@@ -8,18 +7,34 @@ class Board
      @layout = layout
   end
 
-  def prepare
+  def start(player1, player2)
+    puts "\n\nGame start"
     draw
+    while true
+      if play(player1)
+        winner(player1, player2)
+        break
+      end
+      if play(player2)
+        winner(player2, player1)
+        break
+      end
+    end
   end
 
-  def play(player, position)
-    position = Matrix[*@layout].index(position) #Get coords of element
+  def play(player)
+    position = nil
+    until position do
+      puts "#{player.name} choose position:"
+      position = gets.chomp.to_i
+      position = Matrix[*@layout].index(position) #Get coords of element
+    end
     @layout[position[0]][position[1]] = player.symbol #Change element to player symbol
     draw
-    puts check(player)
+    check(player)
   end
 
-  #private
+  private
 
   def draw
     @layout.each_with_index do |row, row_index|
@@ -58,18 +73,26 @@ class Board
         end
 
           #Check diagonal down-right
-        if i + 2 < cols && @layout[i][j] == symbol && @layout[i + 1][j + 1] == symbol && @layout[i + 2][j + 2] == symbol
+        if (i + 2 < rows && j + 2 < cols) && @layout[i][j] == symbol && @layout[i + 1][j + 1] == symbol && @layout[i + 2][j + 2] == symbol
           return true
         end
 
         #Check diagonal down-left
-        if j - 2 >= 0 && @layout[i][j] == symbol && @layout[i + 1][j - 1] == symbol && @layout[i + 2][j - 2] == symbol
+        if (j - 2 >= 0 && i + 2 < rows) && @layout[i][j] == symbol && @layout[i + 1][j - 1] == symbol && @layout[i + 2][j - 2] == symbol
           return true
         end
 
       end
     end
     return false
+  end
+
+  def winner(player_win, player_loose)
+    puts "Congratulations #{player_win.name} won!"
+    puts 'Play again? (Y/N)'
+    if gets.chomp == 'Y'
+      start(player_loose,player_win)
+    end
   end
 end
 
@@ -85,10 +108,12 @@ class Player
 end
 
 
-player1 = Player.new('1', 'x')
+print 'Enter Player 1: '
+player1 = Player.new(gets.chomp, 'x')
+
+print 'Enter Player 2: '
+player2 = Player.new(gets.chomp, 'o')
 
 board = Board.new()
-board.play(player1, 3)
-board.play(player1, 5)
-board.play(player1, 7)
 
+board.start(player1, player2)
