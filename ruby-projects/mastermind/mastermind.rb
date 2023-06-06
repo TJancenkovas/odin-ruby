@@ -3,8 +3,8 @@ require 'pry'
 class Mastermind
   attr_reader :numbers, :slots
 
-  def initialize(slots, numbers)
-    @slots = slots
+  def initialize(numbers)
+    @slots = 4
     @numbers = numbers
   end
 
@@ -27,14 +27,8 @@ class Mastermind
     p code
     puts 'Code generated'
     12.times do |n|
-      guess = get_guess(n)
-      p guess
-      if guess == code
-        win
-        exit
-      else
-        print_accuracy(guess, code)
-      end
+      guess = get_guess(n) # Gets guess from user
+      submit_guess(guess, code)
     end
     loose
   end
@@ -43,11 +37,24 @@ class Mastermind
     code = make_code_manual
     p code
     12.times do
-      cpu_guess(code)
+      guess = make_code
+      p guess
+      submit_guess(guess, code)
     end
+    loose
   end
 
+  # GAME LOGIC HANDLING
+
   private
+
+  def submit_guess (guess, code)
+    if guess == code
+      win
+    else
+      print_accuracy(guess, code)
+    end
+  end
 
   def make_code
     rnd = Random.new
@@ -74,10 +81,6 @@ class Mastermind
 
       puts "Guess length must be #{slots}"
     end
-  end
-
-  def cpu_guess
-    make_code
   end
 
   def get_accuracy(guess, code)
@@ -123,6 +126,26 @@ class Mastermind
     partial
   end
 
+  # CPU PLAYER HANDLING
+
+  def cpu_guess(slots, numbers)
+    s_set = make_code_set(slots, numbers)
+
+  end
+
+  def make_code_set(slots, numbers)
+    set = []
+    numbers.times { |n| set.append(n) }
+    set.repeated_permutation(slots).to_a
+  end
+
+  def remove_same_response(guess, s_set)
+    # Needs to remove everything that would elicit the same response if he guess was the code
+
+  end
+
+  # GAME END HANDLING
+
   def win
     puts 'You win!'
     try_again
@@ -137,6 +160,7 @@ class Mastermind
     puts 'Try again? (Y/N)'
     response = gets.chomp
     start if response.include?('Y') || response.include?('y')
+    exit
   end
 end
 
