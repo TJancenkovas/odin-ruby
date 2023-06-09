@@ -74,7 +74,7 @@ class Mastermind
 
   def play_player
     code = make_code
-    p code
+    # p code
     puts 'Code generated'
     12.times do |n|
       guess = get_guess(n) # Gets guess from user
@@ -85,20 +85,20 @@ class Mastermind
 
   def play_cpu
     cpu = CpuPlayer.new(slots, numbers)
-    # code = make_code_manual
-    code = [1, 1, 3, 5]
+    code = make_code_manual # Still need to add number validation
+    accuracy = [] # This is an ugly way of doing this
     p code
     12.times do
-      guess = cpu.cpu_guess
+      guess = cpu.cpu_guess(accuracy)
       p guess
-      cpu.bad_guess(submit_guess(guess, code))
+      accuracy = submit_guess(guess, code)
     end
     loose
   end
 
   # GAME LOGIC HANDLING
 
-  # private
+  private
 
   def submit_guess(guess, code)
     if guess == code
@@ -166,26 +166,30 @@ class CpuPlayer
     @code_set = make_code_set(slots, numbers)
     @s_set = code_set.clone
     @guess = [1, 1, 2, 2]
+    @first = true
   end
 
-  attr_accessor :code_set, :s_set
-  attr_reader :slots, :numbers, :guess
+  attr_accessor :code_set, :s_set, :first, :guess
+  attr_reader :slots, :numbers
 
-  def cpu_guess
-    if guess == [1, 1, 2, 2]
+  def cpu_guess(accuracy)
+    if first
       first_guess
     else
-      next_guess
+      next_guess(accuracy)
     end
   end
 
+  private
+
   def first_guess
+    self.first = false
     code_set.delete(guess)
   end
 
   def next_guess(accuracy)
-    s_set = remove_same_response(guess, accuracy)
-    guess = minimax
+    self.s_set = remove_same_response(guess, accuracy).to_a
+    self.guess = minimax
     code_set.delete(guess)
   end
 
@@ -203,15 +207,26 @@ class CpuPlayer
   end
 
   def minimax
-    combinations = ['E', 'P'].repeated_permutation(slots).to_a # Create the possible response combinations
+    combinations = generate_combinations
+    self.code_set = code_set.sort_by { |code| s_set.include?(code) ? 0 : 1 }
+    # Sorts the code_set so that codes in the s_set are prefered
     code_set.min_by do |code|
-      combinations.max_by do |accuracy|
-        remove_same_response(code, accuracy).length #find the maximum amount of remaining guesses for each combo
-      end
+      combinations.map do |accuracy|
+        remove_same_response(code, accuracy).to_a.length # Find the maximum amount of remaining guesses for each combo
+      end.max
     end
+  end
+
+  def generate_combinations
+    combinations = []
+    (0..slots).each do |slot|
+      # Create the possible response combinations
+      ['E', 'P'].repeated_combination(slot) { |combination| combinations << combination }
+    end
+    combinations
   end
 end
 
 
-mastermind = Mastermind.new(5)
-mastermind.play_cpu
+mastermind = Mastermind.new(6)
+mastermind.start
