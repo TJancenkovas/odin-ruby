@@ -22,10 +22,17 @@ class Hangman
   attr_reader :filename, :max_guesses
   attr_accessor :secret_word, :guess_count, :word_guess, :remaining_letters
 
-  def play
-    self.secret_word = read_word
-    p secret_word
+  def start
+    puts 'Load game? (Y/N)'
+    if gets.chomp.downcase == 'y'
+      load_game
+    else
+      self.secret_word = read_word
+    end
+    play
+  end
 
+  def play
     while guess_count < max_guesses
       put_info
       puts 'Enter guess:'
@@ -44,12 +51,14 @@ class Hangman
     puts 'Unused letters:'
     remaining_letters.each { |letter| print "#{letter} " }
     puts
+    puts "Type 'save' to save the game"
   end
 
   def read_guess
     guess = ''
     loop do
       guess = gets.chomp.downcase
+      save_game if guess == 'save'
       break if guess.length == 1 && letter?(guess)
 
       puts 'Please enter a single letter'
@@ -77,6 +86,14 @@ class Hangman
     word.split('')
   end
 
+  def load_game
+    puts 'laod'
+  end
+
+  def save_game
+    puts 'saved'
+  end
+
   def win
     puts "You win!"
     retry?
@@ -89,7 +106,7 @@ class Hangman
 
   def retry?
     puts "Try again? (Y/N)"
-    if gets.chomp == "Y"
+    if gets.chomp.downcase == "y"
       self.guess_count = 0
       self.remaining_letters = ('a'..'z').to_a
       play
@@ -106,4 +123,4 @@ end
 
 
 game = Hangman.new('google-10000-english-no-swears.txt')
-puts game.play
+puts game.start
