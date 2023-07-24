@@ -1,0 +1,1 @@
+{"json_class":"Hangman","data":{"word_list_file":"google-10000-english-no-swears.txt","secret_word":["l","e","c","t","u","r","e"],"guess_count":3,"max_guesses":10,"remaining_letters":["b","c","d","f","g","h","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"],"word_guess":["_","e","_","_","_","_","e"]}}
