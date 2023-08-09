@@ -1,4 +1,4 @@
-def caesar_cipher(string, cipher)
+def caesar_cipher(string, cipher = 0)
 
   string.split("").map do |char|
     if is_letter?(char)
@@ -32,4 +32,4 @@ def is_letter?(char)
   char.match?(/[a-zA-Z]/)
 end
 
-puts caesar_cipher("What the dog doin?", -11)
+# puts caesar_cipher("What the dog doin?", -11)
