@@ -8,14 +8,14 @@ class  Node
     @right = right
   end
 
-  def two_children?
-    return false if left.data.nil? && right.data.nil?
+  def children?
+    return false if self.left.nil? && self.right.nil?
 
     true
   end
 
   def one_child?
-    return false if left.data.nil? ^ right.data.nil?
+    return false if self.left.nil? ^ self.right.nil?
   end
 
 end

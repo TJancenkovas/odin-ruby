@@ -78,7 +78,7 @@ class Board
         end
 
         #Check diagonal down-left
-        if (j - 2 >= 0 && i + 2 < rows) && @layout[i][j] == symbol && @layout[i + 1][j - 1] == symbol && @layout[i + 2][j - 2] == symbol
+        if (j - 2 >= 0 && i + 2 < rows) && @layout[i][j] == symbol && @layout[i + 1][j - 1] == symbol && @layout[i + 2][j - 2] == symbol #You can simplyfy here
           return true
         end
 
