@@ -34,8 +34,6 @@ class Board
     check(player)
   end
 
-  private
-
   def draw
     @layout.each_with_index do |row, row_index|
       row.each_with_index do |el, el_index|
@@ -108,12 +106,12 @@ class Player
 end
 
 
-print 'Enter Player 1: '
-player1 = Player.new(gets.chomp, 'x')
+# print 'Enter Player 1: '
+# player1 = Player.new(gets.chomp, 'x')
 
-print 'Enter Player 2: '
-player2 = Player.new(gets.chomp, 'o')
+# print 'Enter Player 2: '
+# player2 = Player.new(gets.chomp, 'o')
 
-board = Board.new()
+# board = Board.new()
 
-board.start(player1, player2)
+# board.start(player1, player2)
