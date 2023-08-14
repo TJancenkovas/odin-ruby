@@ -60,7 +60,7 @@ describe Board do
         new_game.start(player1, player2)
       end
     end
-    context 'loops twice' do
+    context 'loops once calls second player' do
       before do
         allow(new_game).to receive(:play).and_return(false, true)
       end
@@ -71,5 +71,38 @@ describe Board do
         new_game.start(player1, player2)
       end
     end
+    context 'loops twice' do
+      before do
+        allow(new_game).to receive(:play).and_return(false, false, true)
+      end
+      it 'calls play thrice, draw and winner once' do
+        expect(new_game).to receive(:draw).once
+        expect(new_game).to receive(:play).thrice
+        expect(new_game).to receive(:winner).once
+        new_game.start(player1, player2)
+      end
+    end
+  end
+  context '#winner' do
+    subject(:game_won) { described_class.new }
+
+    before do
+      allow(game_won).to receive(:start)
+      allow(player1).to receive(:name).and_return('player1')
+      allow(game_won).to receive(:puts)
+    end
+
+    it 'restarts the game when Y is received from player' do
+      allow(game_won).to receive(:gets).and_return('Y')
+      expect(game_won).to receive(:start).once
+      game_won.winner(player1, player2)
+    end
+
+    it 'does not restart game when N is received from player' do
+      allow(game_won).to receive(:gets).and_return('N')
+      expect(game_won).not_to receive(:start)
+      game_won.winner(player1, player2)
+    end
+
   end
 end
