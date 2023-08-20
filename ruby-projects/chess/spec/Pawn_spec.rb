@@ -5,8 +5,8 @@ require_relative '../lib/chess'
 describe Pawn do
   context 'has correct variables' do
     subject(:new_pawn) { described_class.new('white') }
-    it 'returns \u2659' do
-      expect(new_pawn.symbol).to eq("\u2659")
+    it 'returns ♙' do
+      expect(new_pawn.symbol).to eq("♙")
     end
     it 'returns white' do
       expect(new_pawn.color).to eq('white')

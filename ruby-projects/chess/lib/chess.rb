@@ -1,1 +1,1 @@
-require_relative 'Pawn'
+require_relative 'pieces/Pawn'
