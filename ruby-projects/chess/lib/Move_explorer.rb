@@ -13,29 +13,41 @@ class Move_explorer
 
   def explore_diagonally(board, start_pos, translation)
     if translation[0].positive?
-      explore_digonally_up(board, start_pos, translation)
-    else
       explore_diagonally_down(board, start_pos, translation)
-    end
-  end
-
-  def explore_digonally_up(board, start_pos, translation)
-    if translation[1].positive?
-      # explore to the right
-      translation[0].times { |pos| return false unless board[start_pos[0] + pos][start_pos[1] + pos].nil? }
     else
-      # explore to the left
-      translation[0].times { |pos| return false unless board[start_pos[0] + pos][start_pos[1] - pos].nil? }
+      explore_diagonally_up(board, start_pos, translation)
     end
   end
 
   def explore_diagonally_down(board, start_pos, translation)
     if translation[1].positive?
       # explore to the right
-      translation[0].abs.times { |pos| return false unless board[start_pos[0] - pos][start_pos[1] + pos].nil? }
+      (translation[0] - 1).times do |pos|
+        pos += 1
+        return false unless board[start_pos[0] + pos][start_pos[1] + pos].nil?
+      end
     else
       # explore to the left
-      translation[0].abs.times { |pos| return false unless board[start_pos[0] - pos][start_pos[1] - pos].nil? }
+      (translation[0] - 1).times do |pos|
+        pos += 1
+        return false unless board[start_pos[0] + pos][start_pos[1] - pos].nil?
+      end
+    end
+  end
+
+  def explore_diagonally_up(board, start_pos, translation)
+    if translation[1].positive?
+      # explore to the right
+      (translation[0].abs - 1).times do |pos|
+        pos += 1
+        return false unless board[start_pos[0] - pos][start_pos[1] + pos].nil?
+      end
+    else
+      # explore to the left
+      (translation[0].abs - 1).times do |pos|
+        pos += 1
+        return false unless board[start_pos[0] - pos][start_pos[1] - pos].nil?
+      end
     end
   end
 
