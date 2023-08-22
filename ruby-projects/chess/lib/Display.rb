@@ -19,7 +19,7 @@ class Display
     if board[row][col].nil?
       piece = ' '
     else
-      piece = board[row][col].symbol
+      piece = board[row][col]
     end
     print " #{piece} |"
   end

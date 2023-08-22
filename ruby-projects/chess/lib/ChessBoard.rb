@@ -5,15 +5,17 @@ require_relative 'pieces/Queen'
 require_relative 'pieces/King'
 require_relative 'pieces/Knight'
 require_relative 'Display'
+require_relative 'Move_explorer'
 
 class ChessBoard
 
-  attr_accessor :board, :size
+  attr_accessor :board, :size, :explorer
 
   def initialize
     @board = []
     @size = 8
     @display = Display.new
+    @explorer = Move_explorer.new()
   end
 
   def new_board
@@ -28,11 +30,20 @@ class ChessBoard
 
   def move_piece(start_pos, end_pos)
     piece = board[start_pos[0]][start_pos[1]]
-    return false unless piece.valid_move?(start_pos, end_pos)
+    if legal_move?(piece, start_pos, end_pos)
+      board[end_pos[0]][end_pos[1]] = piece
+      board[start_pos[0]][start_pos[1]] = nil
+      piece
+    else
+      false
+    end
+  end
 
-    board[end_pos[0]][end_pos[1]] = piece
-    board[start_pos[0]][start_pos[1]] = nil
-    piece
+  def legal_move?(piece, start_pos, end_pos)
+    return false unless piece.valid_move?(start_pos, end_pos) && explorer.check_destination(board, start_pos, end_pos)
+    return explorer.explore_path(board, start_pos, end_pos) unless piece.instance_of?(::Knight)
+
+    true
   end
 
   private
