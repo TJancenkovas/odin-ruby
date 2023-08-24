@@ -3,8 +3,8 @@ require_relative "Piece"
 class Bishop < Piece
   attr_accessor :color, :moved, :symbol, :points_worth
 
-  def initialize(color)
-    super(color)
+  def initialize(color, board, start_pos)
+    super(color, board, start_pos)
     @symbol = symbol?(color)
     @points_worth = 3
   end

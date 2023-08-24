@@ -3,8 +3,8 @@ require_relative "Piece"
 class Queen < Piece
   attr_accessor :color, :moved, :symbol, :points_worth
 
-  def initialize(color)
-    super(color)
+  def initialize(color, board, start_pos)
+    super(color, board, start_pos)
     @symbol = symbol?(color)
     @points_worth = 8
   end

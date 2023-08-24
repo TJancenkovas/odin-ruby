@@ -3,8 +3,8 @@ require_relative "Piece"
 class King < Piece
   attr_accessor :color, :moved, :symbol, :points_worth, :allowed_translations
 
-  def initialize(color)
-    super(color)
+  def initialize(color, board, start_pos)
+    super(color, board, start_pos)
     @symbol = symbol?(color)
     @points_worth = 8
     @allowed_translations = [-1, 0, 1].repeated_permutation(2).to_a.reject { |el| el == [0,0] }

@@ -3,8 +3,8 @@ require_relative "Piece"
 class Pawn < Piece
   attr_accessor :color, :moved, :symbol, :points_worth
 
-  def initialize(color)
-    super(color)
+  def initialize(color, board, start_pos)
+    super(color, board, start_pos)
     @symbol = symbol?(color)
     @moved = false
     @points_worth = 1
@@ -12,19 +12,27 @@ class Pawn < Piece
 
   def valid_move?(start_pos, end_pos)
     translation = [end_pos[0] - start_pos[0], end_pos[1] - start_pos[1]]
+    return true if valid_attack?(translation, end_pos)
+
     if moved?
       return true if white? && one_up?(translation)
-      return true if one_down?(translation)
+      return true if !white? && one_down?(translation)
     else
       return true if white? && (one_up?(translation) || two_up?(translation))
-      return true if one_up?(translation) || two_down?(translation)
+      return true if !white? && (one_down?(translation) || two_down?(translation))
     end
   end
 
-  def valid_attack?(start_pos, end_pos)
-    translation = [end_pos[0] - start_pos[0], end_pos[1] - start_pos[1]]
-    return true if white? && (up_left?(translation) || up_right?(translation))
-    return true if up_left?(translation) || down_right?(translation)
+  def valid_attack?(translation, end_pos)
+    return true if white? && (up_left?(translation) || up_right?(translation)) && opposing_piece(end_pos)
+    return true if !white? && (down_left?(translation) || down_right?(translation)) && opposing_piece(end_pos)
+  end
+
+  def opposing_piece(end_pos)
+    opposing_piece = board[end_pos[0]][end_pos[1]]
+    return false if opposing_piece.nil? || opposing_piece.white? == white?
+
+    true
   end
 
   private

@@ -6,6 +6,7 @@ class Move_explorer
 
   def explore_path(board, start_pos, end_pos)
     translation = [end_pos[0] - start_pos[0], end_pos[1] - start_pos[1]]
+    return true if [0, 1].repeated_permutation(2).include?(translation)
     return explore_straight(board, start_pos, translation) if translation[0].zero? || translation [1].zero?
 
     explore_diagonally(board, start_pos, translation)
@@ -33,6 +34,7 @@ class Move_explorer
         return false unless board[start_pos[0] + pos][start_pos[1] - pos].nil?
       end
     end
+    true
   end
 
   def explore_diagonally_up(board, start_pos, translation)
@@ -49,6 +51,7 @@ class Move_explorer
         return false unless board[start_pos[0] - pos][start_pos[1] - pos].nil?
       end
     end
+    true
   end
 
   def explore_straight(board, start_pos, translation)
@@ -57,6 +60,7 @@ class Move_explorer
     else
       explore_vertically(board, start_pos, translation)
     end
+    true
   end
 
   def explore_horizontally(board, start_pos, translation)
@@ -67,6 +71,7 @@ class Move_explorer
       # explore to the left
       (translation[1].abs - 1).times { |pos| return false unless board[start_pos[0]][start_pos [1] - (pos + 1)].nil? }
     end
+    true
   end
 
   def explore_vertically(board, start_pos, translation)
@@ -77,6 +82,7 @@ class Move_explorer
       # explore up
       (translation[0].abs - 1).times { |pos| return false unless board[start_pos[0] - (pos + 1)][start_pos[1]].nil? }
     end
+    true
   end
 
   def check_destination(board, start_pos, end_pos)
